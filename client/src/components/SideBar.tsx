@@ -9,12 +9,8 @@ import IconText from "./IconText";
 
 export default function SideBar() {
   return (
-    <aside className="static top-0 left-0 w-full max-w-xs h-screen p-5 bg-blue-200">
+    <aside className="static top-0 left-0 w-full max-w-xs h-screen p-5 bg-blue-200 z-[999]">
       <section className="h-full  flex flex-col items-center ">
-        <h1 className="pt-5 text-4xl text-center font-extrabold">
-          STUDY STACK
-        </h1>
-
         <section className="pt-5 flex flex-col items-center justify-center">
           <Avatar className="h-20 w-20">
             <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
