@@ -3,9 +3,9 @@ import NavBar from "./components/NavBar";
 
 function App() {
   return (
-    <main className="flex w-full min-h-screen bg-red-200">
+    <main className="relative flex w-full min-h-screen bg-slate-100">
       <SideBar />
-      <section className="w-full h-full">
+      <section className=" w-full h-full">
         <NavBar />
       </section>
     </main>

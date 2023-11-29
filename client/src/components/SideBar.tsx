@@ -4,12 +4,28 @@ import {
   IconHome,
   IconFilePlus,
   IconReload,
+  IconX,
 } from "@tabler/icons-react";
 import IconText from "./IconText";
+import { useSideBarContext } from "@/context/SideBarContext";
 
 export default function SideBar() {
+  const { isOpen, setIsOpen } = useSideBarContext();
+
   return (
-    <aside className="static top-0 left-0 w-full max-w-xs h-screen p-5 bg-blue-200 z-[999]">
+    <aside
+      className={`fixed  lg:static duration-1000 ease-in-out transition-all ${
+        isOpen ? "left-0" : "left-[-1000px]"
+      } top-0 w-full max-w-xs h-screen p-5 bg-white z-[999] border-r-slate-200 border`}
+    >
+      <section
+        onClick={() => {
+          setIsOpen(false);
+        }}
+        className="absolute top-5 right-5 lg:hidden"
+      >
+        <IconX />
+      </section>
       <section className="h-full  flex flex-col items-center ">
         <section className="pt-5 flex flex-col items-center justify-center">
           <Avatar className="h-20 w-20">
