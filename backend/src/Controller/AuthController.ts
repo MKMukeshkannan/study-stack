@@ -3,23 +3,19 @@ import { ZodError } from "zod";
 import bcrypt from "bcrypt";
 import { UserType, userSchema } from "../utils/validators.js";
 import { Request, Response } from "express";
-
-const data: UserType[] = [
-  {
-    name: "hehlj",
-    email: "MK@gmail.com",
-    password: "passwored1",
-  },
-];
+import pool from "../utils/pgClient.js";
 
 async function SignUp(req: Request, res: Response) {
   try {
     const { name, password, email } = userSchema.parse(req.body);
-
     const hashedPassword = await bcrypt.hash(password, 10);
-    data.push({ name, email, password: hashedPassword });
 
-    res.status(200).json({ email, hashedPassword, name });
+    const query =
+      "INSERT INTO authuser(name, email, password) VALUES($1, $2, $3)";
+    const parameters = [name, email, hashedPassword];
+    const result = await pool.query(query, parameters);
+
+    res.status(200).json(result.rows);
   } catch (err) {
     if (err instanceof ZodError) {
       const validationError = fromZodError(err);
@@ -30,7 +26,11 @@ async function SignUp(req: Request, res: Response) {
 
 async function LogIn(req: Request, res: Response) {
   const { email, password } = req.body;
-  const userData = data.filter((val) => val.email === email);
+
+  const query = "SELECT * FROM authuser";
+  const result = await pool.query(query);
+
+  const userData = result.rows.filter((val) => val.email === email);
 
   if (!userData) return res.status(400).send("cannot Find");
 
@@ -43,4 +43,4 @@ async function LogIn(req: Request, res: Response) {
   }
 }
 
-export { data, SignUp, LogIn };
+export { SignUp, LogIn };

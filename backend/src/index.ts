@@ -1,5 +1,6 @@
 import express from "express";
 import AuthRoute from "./routes/authRoute.js";
+import { PORT } from "./utils/config.js";
 
 const app = express();
 app.use(express.json());
@@ -11,5 +12,5 @@ app.get("/", (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("listening on port 3000");
+  console.log(`listening on port ${PORT}`);
 });
