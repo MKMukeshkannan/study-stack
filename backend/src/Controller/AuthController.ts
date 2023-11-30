@@ -1,7 +1,7 @@
 import { fromZodError } from "zod-validation-error";
 import { ZodError } from "zod";
 import bcrypt from "bcrypt";
-import { UserType, userSchema } from "../utils/validators.js";
+import { userSchema } from "../utils/validators.js";
 import { Request, Response } from "express";
 import pool from "../utils/pgClient.js";
 

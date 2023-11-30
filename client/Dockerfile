@@ -1,13 +1,24 @@
-FROM node:16
+FROM node:20-alpine as BUILD_IMAGE
+WORKDIR /client
 
-WORKDIR /usr/src/app
+COPY package.json .
 
-COPY package*.json ./
-
-RUN yarn 
+RUN yarn install
 
 COPY . .
 
-EXPOSE 4173
+RUN yarn build
 
-CMD ["yarn", "start"]
+FROM node:20-alpine as PRODUCTION_IMAGE
+
+WORKDIR /client
+
+COPY --from=BUILD_IMAGE /client/dist/ /client/dist/
+EXPOSE 8080
+
+COPY package.json .
+COPY vite.config.ts .
+RUN yarn add typescript
+
+EXPOSE 8080
+CMD ["yarn", "preview"]
