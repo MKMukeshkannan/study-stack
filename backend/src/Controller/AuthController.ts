@@ -5,6 +5,7 @@ import { UserType, userSchema } from "../utils/validators.js";
 import { Request, Response } from "express";
 import pool from "../utils/pgClient.js";
 import { insertUser, getUserEmail } from "../utils/queries.js";
+import { getToken } from "../utils/config.js";
 
 async function SignUp(req: Request, res: Response) {
   try {
@@ -37,9 +38,11 @@ async function LogIn(req: Request, res: Response) {
         .json({ sucess: false, message: "Email do not exist" });
 
     const userData: UserType = result.rows[0];
-    if (await bcrypt.compare(password, userData.password))
-      res.status(200).send({ sucess: true, userData });
-    else res.status(401).send({ sucess: false, message: "Wrong Password" });
+
+    if (await bcrypt.compare(password, userData.password)) {
+      const token = getToken({ name: userData.name, email: userData.email });
+      res.status(200).send({ sucess: true, token });
+    } else res.status(401).send({ sucess: false, message: "Wrong Password" });
   } catch (err) {
     res.status(500).send({ sucess: false, message: "Internal Server Error" });
   }
