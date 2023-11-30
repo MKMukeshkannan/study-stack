@@ -13,6 +13,7 @@ route.get("/", async (req, res) => {
 });
 
 route.post("/sign-up", SignUp);
+
 route.post("/login", LogIn);
 
 export default route;
