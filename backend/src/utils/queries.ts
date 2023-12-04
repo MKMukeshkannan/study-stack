@@ -3,4 +3,7 @@ const insertUser =
 
 const getUserEmail = "SELECT * FROM authuser WHERE email = $1";
 
-export { insertUser, getUserEmail };
+const insertStack  = "INSERT INTO stack (user_id, stack_name) VALUES ($1, $2)";
+
+
+export { insertUser, getUserEmail, insertStack };

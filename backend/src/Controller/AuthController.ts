@@ -40,7 +40,11 @@ async function LogIn(req: Request, res: Response) {
     const userData: UserType = result.rows[0];
 
     if (await bcrypt.compare(password, userData.password)) {
-      const token = getToken({ name: userData.name, email: userData.email });
+      const token = getToken({
+        id: userData.id,
+        name: userData.name,
+        email: userData.email,
+      });
       res.status(200).send({ sucess: true, token });
     } else res.status(401).send({ sucess: false, message: "Wrong Password" });
   } catch (err) {

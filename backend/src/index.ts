@@ -1,12 +1,16 @@
 import express from "express";
 import AuthRoute from "./routes/authRoute.js";
+import Stack from "./routes/stackRoute.js";
+import Question from './routes/questionRoute.js'
 import pool from "./utils/pgClient.js";
 import { PORT } from "./utils/config.js";
 
 const app = express();
 app.use(express.json());
 
-app.use("/auth", AuthRoute);
+app.use("/api/v1/auth", AuthRoute);
+app.use("/api/v1/stack", Stack);
+app.use("/api/v1/question", Question);
 
 app.get("/", async (req, res) => {
   const query = "SELECT * FROM authuser";

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import pkg from "jsonwebtoken";
 import { JWT_SECRET } from "../utils/config.js";
+import pool from "../utils/pgClient.js";
 
 const { verify } = pkg;
 
@@ -16,8 +17,26 @@ function authrizeToken(req: Request, res: Response, next: NextFunction) {
       return res.status(402).send(err);
     }
     req.body.user = user;
+
     next();
   });
 }
 
-export { authrizeToken };
+async function authorizeUserStack(req: Request, res: Response, next: NextFunction) {
+  const {user} = req.body;
+  const stack_id = req.params.stack_id
+  const getUserStack = "SELECT * FROM stack WHERE stack_id = $1 AND user_id = $2;"
+  const params = [stack_id, user.id]
+
+  try {
+    const result = await pool.query(getUserStack, params);
+    console.log(result.rows)
+    if (result.rowCount === 0) 
+     return res.status(404).json({sucess: false, error: "Not your stack"})
+  } catch(e) {
+    return res.status(500).json({sucess: false, error: "internal server error"})
+  }
+  next()
+}
+
+export { authrizeToken, authorizeUserStack};
