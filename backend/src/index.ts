@@ -4,6 +4,7 @@ import Stack from "./routes/stackRoute.js";
 import Question from './routes/questionRoute.js'
 import pool from "./utils/pgClient.js";
 import { PORT } from "./utils/config.js";
+import errorHandler from "./middleware/ErrorHandler.js";
 
 const app = express();
 app.use(express.json());
@@ -18,6 +19,8 @@ app.get("/", async (req, res) => {
 
   res.send(result.rows);
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
