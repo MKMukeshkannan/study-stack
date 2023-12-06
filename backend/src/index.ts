@@ -1,7 +1,7 @@
 import express from "express";
 import AuthRoute from "./routes/authRoute.js";
 import Stack from "./routes/stackRoute.js";
-import Question from './routes/questionRoute.js'
+import Question from "./routes/questionRoute.js";
 import pool from "./utils/pgClient.js";
 import { PORT } from "./utils/config.js";
 import errorHandler from "./middleware/ErrorHandler.js";

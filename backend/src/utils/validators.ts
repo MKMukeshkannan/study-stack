@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-const userSchema = z
+const UserSchema = z
   .object({
+    id: z.number(),
     name: z
       .string({
         required_error: "Name is required",
@@ -12,21 +13,67 @@ const userSchema = z
       .string({
         required_error: "Password is required",
       })
-      .min(6, "Password too short - should be 6 chars minimum"),
+      .max(25, "Password too long - should be atmost 25 characteres")
+      .min(8, "Password too short - should be 8 chars minimum"),
     email: z
       .string({
         required_error: "Email is required",
       })
       .email("Not a valid email"),
+  });
+
+const userSignUpValidator = UserSchema.omit({ id: true });
+
+const userLoginValidator = UserSchema.pick({ email: true, password: true });
+
+const userOnBodyValidator = z.object({
+  user: UserSchema.pick({ id: true }),
+});
+
+const stackIdValidator = z.number();
+const questionIdValidator = stackIdValidator;
+
+const userStackNameBodyValidator = z.object({
+  user: UserSchema.pick({ id: true }),
+  stackName: z.string({
+    required_error: "Stack name is required!!",
   })
+    .min(4, "Name should be atleast 4 characters long !")
+    .max(12, "Name should be atmost 12 characters long !"),
+});
 
-const userSchemaID = userSchema.extend({ id: z.number() })
+const questionsPostValidator = z.object({
+  question_id: z.number({
+    required_error: "Required 'question_id' feild",
+  }),
+  question: z.string({
+    required_error: "Required 'question' feild",
+  })
+    .min(4, "Question Should be atleast 4 characters long !")
+    .max(50, "Question can be atmost 50 characters long !"),
+  answer: z.string({
+    required_error: "Required 'answer' feild",
+  })
+    .min(4, "Answer Should be atleast 4 characters long !")
+    .max(50, "Answer can be atmost 50 characters long !"),
+});
 
-type UserType = z.infer<typeof userSchemaID>;
+const questionUpdateValidator = questionsPostValidator
+  .omit({
+    question_id: true,
+  })
+  .extend({ stack_id: z.number() });
 
+type UserType = z.infer<typeof UserSchema>;
 
-const stackSchema = z.object({
-  stack_name: z.string()
-})
-
-export { userSchema, UserType, stackSchema };
+export {
+  questionIdValidator,
+  questionsPostValidator,
+  questionUpdateValidator,
+  stackIdValidator,
+  userLoginValidator,
+  userOnBodyValidator,
+  userSignUpValidator,
+  userStackNameBodyValidator,
+  UserType,
+};
