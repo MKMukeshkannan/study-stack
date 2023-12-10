@@ -73,6 +73,7 @@ export {
   stackIdValidator,
   userLoginValidator,
   userOnBodyValidator,
+  UserSchema,
   userSignUpValidator,
   userStackNameBodyValidator,
   UserType,
