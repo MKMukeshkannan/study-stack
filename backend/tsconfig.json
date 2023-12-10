@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "types": ["node", "jest"],
+    "module": "commonjs",
+    "moduleResolution": "node",
     "strict": true,
-    "target": "ES2020",
+    "target": "es2017",
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "allowJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "./jest.config.ts"]
 }
