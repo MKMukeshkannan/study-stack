@@ -9,6 +9,7 @@ import {
 } from "@tabler/icons-react";
 import IconText from "./IconText";
 import { useSideBarContext } from "@/context/SideBarContext";
+import { Link } from "react-router-dom";
 
 export default function SideBar() {
   const { isOpen, setIsOpen } = useSideBarContext();
@@ -32,17 +33,17 @@ export default function SideBar() {
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <h1 className="text-xl font-bold">Mukesh Kannan</h1>
+        <Link to="/me" className="text-xl font-bold">Mukesh Kannan</Link>
         <p className="text-xs font-mono">Lvl. 1</p>
       </section>
 
       <section className="flex flex-col flex-1 mb-24 justify-center space-y-4">
-        <IconText text="Home" icon={<IconHome />} />
-        <IconText text="Add New" icon={<IconFilePlus />} />
-        <IconText text="Revise" icon={<IconReload />} />
-        <IconText text="Settings" icon={<IconSettings />} />
+        <IconText text="Home" icon={<IconHome />} link='/' />
+        <IconText text="Add New" icon={<IconFilePlus />} link='add-new' />
+        <IconText text="Revise" icon={<IconReload />} link='/revise' />
+        <IconText text="Settings" icon={<IconSettings />} link='/settings'/>
       </section>
-      <IconText text="Logout" icon={<IconLogout />} />
+      <IconText text="Logout" icon={<IconLogout/>} link="/" />
     </aside>
   );
 }

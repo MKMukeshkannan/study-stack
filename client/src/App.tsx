@@ -1,16 +1,20 @@
-import SideBar from "./components/SideBar";
-import NavBar from "./components/NavBar";
+import { Route, Routes } from "react-router-dom";
+import { AddNew, Home, Login, Profile,Signup, Revise, Settings } from "./pages";
+import DashboardLayout from "./components/DashboardLayout";
 
 function App() {
   return (
-    <main className="relative flex w-full min-h-screen bg-slate-100">
-      <SideBar />
-      <section className="w-full flex flex-col">
-        <NavBar />
-        <section className="p-3 flex-auto h-0 overflow-y-auto">
-        </section>
-      </section>
-    </main>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route element={<DashboardLayout />}>
+        <Route index element={<Home />} />
+        <Route path="/revise" element={<Revise />} />
+        <Route path="/add-new" element={<AddNew />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/me" element={<Profile />} />
+      </Route>
+    </Routes>
   );
 }
 
