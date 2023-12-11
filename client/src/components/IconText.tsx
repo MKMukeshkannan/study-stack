@@ -7,8 +7,8 @@ interface props {
 
 export default function IconText({ text, icon }: props) {
   return (
-    <a href="#" className="text-2xl  font-bold">
-      <span className="inline-block align-middle pr-2 ">{icon}</span>
+    <a href="#" className="text-2xl font-bold flex items-center">
+      <span className="pr-2">{icon}</span>
       {text}
     </a>
   );

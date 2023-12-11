@@ -6,7 +6,7 @@ export default function NavBar() {
   const { setIsOpen } = useSideBarContext();
 
   return (
-    <nav className="drop-shadow p-5 static top-0 right-0 bg-white z-[9999]">
+    <nav className="drop-shadow p-5 bg-white z-[9999]">
       <section className="flex flex-row justify-between">
         <h1 className="flex items-center text-3xl lg:text-4xl font-extrabold ">
           <IconMenu2
