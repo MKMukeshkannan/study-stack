@@ -1,20 +1,48 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+// import { useAuthContext } from "@/context/AuthContext";
+import { backend } from "@/lib/utils";
 import { userLoginValidator } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "../lib/axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function Login() {
   type TUserLoginValidator = z.infer<typeof userLoginValidator>;
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } =
-    useForm<TUserLoginValidator>({
-      resolver: zodResolver(userLoginValidator),
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<TUserLoginValidator>({
+    resolver: zodResolver(userLoginValidator),
+  });
 
-  const onSumbit = (e) => {
-    console.log("Submitted");
+  const onSumbit = async (data: TUserLoginValidator) => {
+    try {
+      const response = await axios.post("/api/v1/auth/login", data);
+      // setAuth(response.data)
+      console.log(response.data);
+    } catch (err: any) {
+      if (!err?.response) {
+        setError("root", {
+          type: "server",
+          message: "No response from the server",
+        });
+      } else if (err.response?.status === 400) {
+        setError("root", {
+          type: "badrequest",
+          message: "Password or Email might be wrong",
+        });
+      } else {
+        setError("root", {
+          type: "loginfailed",
+          message: "Login Failed",
+        });
+      }
+    }
   };
 
   return (
@@ -44,6 +72,12 @@ export default function Login() {
           />
           {errors.password && (
             <p className="text-red-500 ">{`* ${errors.password.message}`}</p>
+          )}
+
+          {errors.root && (
+            <p className="bg-red-400 text-white font-bold p-4 rounded-xl text-center">
+              {`${errors.root.message}`}
+            </p>
           )}
 
           <Button

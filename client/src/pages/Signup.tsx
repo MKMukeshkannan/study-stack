@@ -2,20 +2,37 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { userSignUpValidatorClient } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldValues, useForm } from "react-hook-form";
+import axios from "@/lib/axios";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 export default function Signup() {
   type TUserSignUpClient = z.infer<typeof userSignUpValidatorClient>;
-  const { register, handleSubmit, formState: { errors } } = useForm<
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError,
+  } = useForm<
     TUserSignUpClient
   >({
     resolver: zodResolver(userSignUpValidatorClient),
   });
+  const navigate = useNavigate();
 
-  const onsubmit = (e: FieldValues) => {
-    console.log("clicke");
-    console.log(e);
+  const onsubmit = async (data: TUserSignUpClient) => {
+    try {
+      const response = await axios.post("/api/v1/auth/sign-up", data);
+      if (response.statusText === "OK") {
+        return navigate("/login");
+      }
+    } catch (e) {
+      setError("root", {
+        type: "server",
+        message: "Somthing With The Server",
+      });
+    }
   };
 
   return (
@@ -62,10 +79,24 @@ export default function Signup() {
             className="rounded-none text-xl bordernone border border-white border-b-black "
           />
           {errors.confirmPassword && (
-            <p className="text-red-500 ">{`* ${errors.confirmPassword.message}`}</p>
+            <p className="text-red-500 ">
+              {`* ${errors.confirmPassword.message}`}
+            </p>
           )}
 
-          <Button type="submit" className="text-xl mt-4">Signup</Button>
+          {errors.root && (
+            <p className="bg-red-400 text-white font-bold p-4 rounded-xl text-center">
+              {`${errors.root.message}`}
+            </p>
+          )}
+
+          <Button
+            disabled={isSubmitting}
+            type="submit"
+            className="text-xl mt-4"
+          >
+            Signup
+          </Button>
         </form>
       </section>
     </main>

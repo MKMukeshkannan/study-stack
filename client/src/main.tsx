@@ -4,13 +4,16 @@ import App from "./App.tsx";
 import "./index.css";
 import SideBarContextProvider from "./context/SideBarContextProvider.tsx";
 import { BrowserRouter } from "react-router-dom";
+import AuthContextProvider from "./context/AuthContextProvider.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <SideBarContextProvider>
-        <App />
-      </SideBarContextProvider>
-    </BrowserRouter>
+    <AuthContextProvider>
+      <BrowserRouter>
+        <SideBarContextProvider>
+          <App />
+        </SideBarContextProvider>
+      </BrowserRouter>
+    </AuthContextProvider>
   </React.StrictMode>,
 );
