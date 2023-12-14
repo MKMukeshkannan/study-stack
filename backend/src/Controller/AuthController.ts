@@ -7,7 +7,14 @@ import {
 import { Request, Response } from "express";
 import pool from "../utils/pgClient.js";
 import { getUserEmailQuery, insertUserQuery } from "../utils/queries.js";
-import { getToken } from "../utils/config.js";
+import {
+  getAccessToken,
+  getRefreshToken,
+  REFRESH_SECRET,
+} from "../utils/config.js";
+import pkg from "jsonwebtoken";
+
+const { verify } = pkg;
 
 async function SignUp(req: Request, res: Response) {
   if (!req.body) return;
@@ -33,13 +40,81 @@ async function LogIn(req: Request, res: Response) {
   const userData: UserType = result.rows[0];
 
   if (await bcrypt.compare(password, userData.password)) {
-    const token = getToken({
+    const access_token = getAccessToken({
       id: userData.id,
       name: userData.name,
       email: userData.email,
     });
-    res.status(200).send({ sucess: true, token });
-  } else res.status(401).send({ sucess: false, message: "Wrong Password" });
+    const refresh_token = getRefreshToken({
+      id: userData.id,
+      name: userData.name,
+      email: userData.email,
+    });
+
+    await pool.query(
+      "INSERT INTO sessions (userId, refreshToken) VALUES ($1, $2)",
+      [userData.id, refresh_token],
+    );
+
+    res.cookie("jwt", refresh_token, {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    res.status(200).json(access_token);
+  } else res.status(401).send("Wrong Password");
 }
 
-export { LogIn, SignUp };
+async function RefreshToken(req: Request, res: Response) {
+  const cookie = req.cookies;
+  if (!cookie?.jwt) return res.sendStatus(401);
+  const refreshToken = cookie.jwt;
+
+  const result = await pool.query(
+    "SELECT (id, name, email) FROM authuser u JOIN sessions s ON u.id = s.userId WHERE s.refreshToken = $1",
+    [refreshToken],
+  );
+  const userData: UserType = result.rows[0];
+  if (!userData) return res.sendStatus(403);
+
+  if (!REFRESH_SECRET) throw new Error("invalid token");
+  verify(refreshToken, REFRESH_SECRET, (err: any, decoded: any) => {
+    if (err || userData.id === decoded.id) return res.sendStatus(403);
+    const access_token = getAccessToken({
+      id: userData.id,
+      name: userData.name,
+      email: userData.email,
+    });
+
+    res.status(200).json(access_token);
+  });
+}
+
+async function Logout(req: Request, res: Response) {
+  const cookie = req.cookies;
+  if (!cookie?.jwt) return res.sendStatus(204);
+  const refreshToken = cookie.jwt;
+
+  const result = await pool.query(
+    "SELECT (id, name, email) FROM authuser u JOIN sessions s ON u.id = s.userId WHERE s.refreshToken = $1",
+    [refreshToken],
+  );
+  const userData: UserType = result.rows[0];
+  if (!userData) {
+    res.clearCookie("jwt", { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    return res.sendStatus(203);
+  }
+
+  await pool.query("DELETE FROM sessions WHERE refreshToken=$1", [
+    refreshToken,
+  ]);
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  });
+  res.sendStatus(204);
+}
+
+export { LogIn, Logout, RefreshToken, SignUp };
