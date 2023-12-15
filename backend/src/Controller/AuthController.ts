@@ -62,7 +62,11 @@ async function LogIn(req: Request, res: Response) {
       secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    res.status(200).json(access_token);
+    res.status(200).json({
+      name: userData.name,
+      email: userData.email,
+      access_token,
+    });
   } else res.status(401).send("Wrong Password");
 }
 

@@ -3,7 +3,7 @@ import { createContext, Dispatch, SetStateAction, useContext } from "react";
 export interface User {
   name: string;
   email: string;
-  accesstoken: string;
+  access_token: string;
 }
 
 export interface AuthState {

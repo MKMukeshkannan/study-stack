@@ -23,7 +23,10 @@ export default function Signup() {
 
   const onsubmit = async (data: TUserSignUpClient) => {
     try {
-      const response = await axios.post("/api/v1/auth/sign-up", data);
+      const response = await axios.post("/api/v1/auth/sign-up", data, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true
+      });
       if (response.statusText === "OK") {
         return navigate("/login");
       }

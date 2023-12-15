@@ -7,6 +7,6 @@ export default axios.create({
 
 export const axiosPrivate = axios.create({
   baseURL: backend,
-  headers: { "Content-Length": "application/json" },
+  headers: { "Content-Type": "application/json" },
   withCredentials: true,
 });

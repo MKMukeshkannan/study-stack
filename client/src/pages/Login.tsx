@@ -1,15 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-// import { useAuthContext } from "@/context/AuthContext";
-import { backend } from "@/lib/utils";
+import { useAuthContext } from "@/context/AuthContext";
 import { userLoginValidator } from "@/lib/validators";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "../lib/axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   type TUserLoginValidator = z.infer<typeof userLoginValidator>;
+  const { setAuth } = useAuthContext();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -22,9 +24,12 @@ export default function Login() {
 
   const onSumbit = async (data: TUserLoginValidator) => {
     try {
-      const response = await axios.post("/api/v1/auth/login", data);
-      // setAuth(response.data)
-      console.log(response.data);
+      const response = await axios.post("/api/v1/auth/login", data, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      setAuth(response.data);
+      return navigate("/");
     } catch (err: any) {
       if (!err?.response) {
         setError("root", {
