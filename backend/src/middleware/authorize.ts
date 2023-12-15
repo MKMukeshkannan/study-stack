@@ -9,12 +9,12 @@ function authrizeToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) return res.status(401).send("Unauth");
+  if (!token) return res.status(401).send("Unautharized");
   if (!JWT_SECRET) throw new Error("invalid token");
 
   verify(token, JWT_SECRET, (err, user) => {
     if (err) {
-      return res.status(402).send(err);
+      return res.status(403).send(err);
     }
     req.body.user = user;
 
@@ -35,7 +35,6 @@ async function authorizeUserStack(
 
   try {
     const result = await pool.query(getUserStack, params);
-    console.log(result.rows);
     if (result.rowCount === 0) {
       return res.status(404).json({ sucess: false, error: "Not your stack" });
     }

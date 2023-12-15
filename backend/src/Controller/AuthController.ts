@@ -76,7 +76,7 @@ async function RefreshToken(req: Request, res: Response) {
   const refreshToken = cookie.jwt;
 
   const result = await pool.query(
-    "SELECT (id, name, email) FROM authuser u JOIN sessions s ON u.id = s.userId WHERE s.refreshToken = $1",
+    "SELECT * FROM authuser u JOIN sessions s ON u.id = s.userId WHERE s.refreshToken = $1",
     [refreshToken],
   );
   const userData: UserType = result.rows[0];
@@ -84,7 +84,7 @@ async function RefreshToken(req: Request, res: Response) {
 
   if (!REFRESH_SECRET) throw new Error("invalid token");
   verify(refreshToken, REFRESH_SECRET, (err: any, decoded: any) => {
-    if (err || userData.id === decoded.id) return res.sendStatus(403);
+    if (err || userData.id !== decoded.id) return res.sendStatus(403);
     const access_token = getAccessToken({
       id: userData.id,
       name: userData.name,

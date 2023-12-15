@@ -1,5 +1,5 @@
 import StackTile from "@/components/StackTile";
-import useAxiosPrivate from '../hooks/useAxiosPrivate'
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useEffect, useState } from "react";
 
 interface stack {
@@ -9,7 +9,7 @@ interface stack {
 
 export default function Home() {
   const [stacks, setStacks] = useState<stack[]>();
-  const axiosPrivate = useAxiosPrivate()
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     let isMounted = true;
@@ -21,8 +21,9 @@ export default function Home() {
           signal: controller.signal,
         });
         isMounted && setStacks(response.data);
-      } catch (e) {
-        console.log(e);
+      } catch (e: any) {
+        if (e?.name === "CanceledError") console.log("Request Is Aborted");
+        else console.log(e);
       }
     };
 
@@ -32,11 +33,11 @@ export default function Home() {
       isMounted = false;
       controller.abort();
     };
-  });
+  }, []);
 
   return (
     <section>
-      {stacks?.length
+      {!stacks?.length
         ? <h1>No Stacks Created</h1>
         : stacks?.map((stack) => <StackTile name={stack.stack_name} />)}
     </section>

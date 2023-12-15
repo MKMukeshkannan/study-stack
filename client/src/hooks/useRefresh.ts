@@ -5,15 +5,16 @@ export default function useRefresh() {
   const { setAuth } = useAuthContext();
 
   const refresh = async () => {
-    const response = await axios.get("/refresh", {
+    const response = await axios.get("/api/v1/auth/refresh", {
+      headers: { "Content-Type": "application/json" },
       withCredentials: true,
     });
 
     setAuth((prev) => {
-      return { ...prev, accesstoken: response.data.accesstoken };
+      return { ...prev, access_token: response.data };
     });
 
-    return response.data.accesstoken;
+    return response.data;
   };
 
   return refresh;
