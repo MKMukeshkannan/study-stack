@@ -8,9 +8,7 @@ export default function DashboardLayout() {
       <SideBar />
       <section className="w-full flex flex-col">
         <NavBar />
-        <section className="p-3 flex-auto h-0 overflow-y-auto">
-          <Outlet />
-        </section>
+        <Outlet />
       </section>
     </main>
   );

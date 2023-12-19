@@ -39,7 +39,7 @@ export default function Home() {
     <section>
       {!stacks?.length
         ? <h1>No Stacks Created</h1>
-        : stacks?.map((stack) => <StackTile name={stack.stack_name} />)}
+        : stacks?.map((stack) => <StackTile key={stack.stack_id} name={stack.stack_name} />)}
     </section>
   );
 }

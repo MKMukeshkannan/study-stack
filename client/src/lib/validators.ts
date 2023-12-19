@@ -70,11 +70,14 @@ const questionUpdateValidator = questionsPostValidator
   })
   .extend({ stack_id: z.number() });
 
+type QuestionType = z.infer<typeof questionsPostValidator>;
+
 type UserType = z.infer<typeof UserSchema>;
 
 export {
   questionIdValidator,
   questionsPostValidator,
+  QuestionType,
   questionUpdateValidator,
   stackIdValidator,
   userLoginValidator,
