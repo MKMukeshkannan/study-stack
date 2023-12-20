@@ -9,10 +9,18 @@ import {
 } from "@tabler/icons-react";
 import IconText from "./IconText";
 import { useSideBarContext } from "@/context/SideBarContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useLogout from "@/hooks/useLogout";
 
 export default function SideBar() {
   const { isOpen, setIsOpen } = useSideBarContext();
+  const navigate = useNavigate();
+  const logoutCall = useLogout();
+
+  const logout = async () => {
+    await logoutCall();
+    navigate("/login");
+  };
 
   return (
     <aside
@@ -38,12 +46,20 @@ export default function SideBar() {
       </section>
 
       <section className="flex flex-col flex-1 mb-24 justify-center space-y-4">
-        <IconText text="Home" icon={<IconHome />} link='/' />
-        <IconText text="Add New" icon={<IconFilePlus />} link='add-new' />
-        <IconText text="Revise" icon={<IconReload />} link='/revise' />
-        <IconText text="Settings" icon={<IconSettings />} link='/settings'/>
+        <IconText text="Home" icon={<IconHome />} link="/" />
+        <IconText text="Add New" icon={<IconFilePlus />} link="add-new" />
+        <IconText text="Revise" icon={<IconReload />} link="/revise" />
+        <IconText text="Settings" icon={<IconSettings />} link="/settings" />
       </section>
-      <IconText text="Logout" icon={<IconLogout/>} link="/" />
+      <h1
+        onClick={logout}
+        className="text-2xl font-bold flex items-center cursor-pointer"
+      >
+        <span className="pr-2">
+          <IconLogout />
+        </span>
+        Logout
+      </h1>
     </aside>
   );
 }

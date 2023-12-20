@@ -30,8 +30,8 @@ const userSignUpValidatorClient = userSignUpValidator.extend({
   path: ["confirmPassword"],
 });
 
-const userLoginValidator = UserSchema.pick({ email: true, password: true });
-
+const userLoginValidator = UserSchema.pick({ email: true, password: true })
+  .extend({ persist: z.boolean() });
 const userOnBodyValidator = z.object({
   user: UserSchema.pick({ id: true }),
 });

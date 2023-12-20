@@ -6,12 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "../lib/axios";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Login() {
   type TUserLoginValidator = z.infer<typeof userLoginValidator>;
-  const { setAuth } = useAuthContext();
+  const { setAuth, setPersist } = useAuthContext();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const {
     register,
@@ -19,17 +21,23 @@ export default function Login() {
     formState: { errors, isSubmitting },
     setError,
   } = useForm<TUserLoginValidator>({
-    resolver: zodResolver(userLoginValidator),
+    resolver: zodResolver(
+      userLoginValidator,
+    ),
   });
 
   const onSumbit = async (data: TUserLoginValidator) => {
     try {
+      const persistValue: string = data.persist ? "true" : "false";
+      localStorage.setItem("persist", persistValue);
+      setPersist(persistValue);
       const response = await axios.post("/api/v1/auth/login", data, {
         headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
       setAuth(response.data);
-      return navigate("/");
+
+      return navigate(from, { replace: true });
     } catch (err: any) {
       if (!err?.response) {
         setError("root", {
@@ -84,7 +92,18 @@ export default function Login() {
               {`${errors.root.message}`}
             </p>
           )}
-
+          <div className="flex flex-row gap-2">
+            <input
+              type="checkbox"
+              {...register("persist")}
+            />
+            <label
+              htmlFor="persist"
+              className="text-sm font-medium leading-none"
+            >
+              Remember me
+            </label>
+          </div>
           <Button
             type="submit"
             className="text-xl mt-4"

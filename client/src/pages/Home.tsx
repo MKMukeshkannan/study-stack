@@ -1,6 +1,7 @@
 import StackTile from "@/components/StackTile";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface stack {
   stack_name: string;
@@ -10,6 +11,8 @@ interface stack {
 export default function Home() {
   const [stacks, setStacks] = useState<stack[]>();
   const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     let isMounted = true;
@@ -23,7 +26,10 @@ export default function Home() {
         isMounted && setStacks(response.data);
       } catch (e: any) {
         if (e?.name === "CanceledError") console.log("Request Is Aborted");
-        else console.log(e);
+        else {
+          console.log(e);
+          navigate("/login", { state: { from: location }, replace: true });
+        }
       }
     };
 
@@ -39,7 +45,9 @@ export default function Home() {
     <section>
       {!stacks?.length
         ? <h1>No Stacks Created</h1>
-        : stacks?.map((stack) => <StackTile key={stack.stack_id} name={stack.stack_name} />)}
+        : stacks?.map((stack) => (
+          <StackTile key={stack.stack_id} name={stack.stack_name} />
+        ))}
     </section>
   );
 }

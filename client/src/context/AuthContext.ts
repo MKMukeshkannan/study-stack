@@ -7,8 +7,10 @@ export interface User {
 }
 
 export interface AuthState {
-  auth: User;
-  setAuth: Dispatch<SetStateAction<User>>;
+  auth: User | null;
+  setAuth: Dispatch<SetStateAction<User | null>>;
+  persist: string;
+  setPersist: Dispatch<SetStateAction<string>>;
 }
 
 export const AuthContext = createContext<AuthState | undefined>(
@@ -22,5 +24,10 @@ export function useAuthContext() {
     throw new Error("useAuthContext got a undefined value");
   }
 
-  return { auth: state.auth, setAuth: state.setAuth };
+  return {
+    auth: state.auth,
+    setAuth: state.setAuth,
+    persist: state.persist,
+    setPersist: state.setPersist,
+  };
 }

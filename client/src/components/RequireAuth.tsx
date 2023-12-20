@@ -6,7 +6,7 @@ export default function RequireAuth() {
   const location = useLocation();
 
   return (
-    auth?.email
+    auth?.access_token
       ? <Outlet />
       : <Navigate to="/login" state={{ from: location }} replace />
   );
