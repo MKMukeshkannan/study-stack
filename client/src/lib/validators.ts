@@ -77,7 +77,7 @@ type UserType = z.infer<typeof UserSchema>;
 export {
   questionIdValidator,
   questionsPostValidator,
-  QuestionType,
+  type QuestionType,
   questionUpdateValidator,
   stackIdValidator,
   userLoginValidator,

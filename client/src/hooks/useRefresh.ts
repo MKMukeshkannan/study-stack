@@ -11,6 +11,7 @@ export default function useRefresh() {
     });
 
     setAuth((prev) => {
+      if (!prev) return null;
       return { ...prev, access_token: response.data };
     });
 

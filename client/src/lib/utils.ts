@@ -6,5 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export const backend = process.env.NODE_ENV === "production"
-  ? "studystack.com"
+  ? "http://localhost:6969"
   : "http://localhost:6969";

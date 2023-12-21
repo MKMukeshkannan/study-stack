@@ -8,7 +8,7 @@ interface props {
 export default function AuthContextProvider({ children }: props) {
   const [auth, setAuth] = useState<User | null>(null);
   const [persist, setPersist] = useState<string>(
-    JSON.parse(localStorage.getItem("persist")) || "false",
+    JSON.parse(localStorage.getItem("persist") || "false"),
   );
 
   return (
