@@ -14,12 +14,16 @@ interface props {
 }
 
 const AddQuestion = ({ isOpen, setOpen }: props) => {
-  const { question, setQuestion, formVal, nextId } = useAddQuestionHook();
+  const { question, setQuestion, formVal, nextId, setFormVal } =
+    useAddQuestionHook();
 
   useEffect(() => {
-    if (formVal.question_id !== -1) {
+    if (formVal) {
       setValue("question", formVal.question);
       setValue("answer", formVal.answer);
+    } else {
+      setValue("question", "");
+      setValue("answer", "");
     }
   }, [formVal]);
 
@@ -37,23 +41,23 @@ const AddQuestion = ({ isOpen, setOpen }: props) => {
     const newData = { ...data, question_id: nextId.current };
     setQuestion([...question, newData]);
     nextId.current += 1;
+    setFormVal(null);
     reset();
   };
 
   const saveQuestion = (data: QuestionType) => {
     const newData: QuestionType[] = [];
     for (let i = 0; i < question.length; i++) {
-      if (question[i].question_id === formVal.question_id) {
+      if (question[i].question_id === formVal?.question_id) {
         newData.push({
           question: data.question,
           answer: data.answer,
-          question_id: formVal.question_id,
+          question_id: formVal?.question_id,
         });
       } else {
         newData.push(question[i]);
       }
     }
-    console.log(newData)
     setQuestion(newData);
   };
 
@@ -93,7 +97,7 @@ const AddQuestion = ({ isOpen, setOpen }: props) => {
             errors.answer && "border-4 border-dashed border-red-500",
           )}
         />
-        {formVal.question_id !== -1
+        {formVal
           ? (
             <>
               <section className="flex flex-row space-x-3">

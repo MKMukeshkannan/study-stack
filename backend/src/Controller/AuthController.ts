@@ -91,7 +91,11 @@ async function RefreshToken(req: Request, res: Response) {
       email: userData.email,
     });
 
-    res.status(200).json(access_token);
+    res.status(200).json({
+      name: userData.name,
+      email: userData.email,
+      access_token,
+    });
   });
 }
 

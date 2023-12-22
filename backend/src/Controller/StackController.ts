@@ -11,13 +11,30 @@ import {
   userOnBodyValidator,
   userStackNameBodyValidator,
 } from "../utils/validators.js";
+import format from "pg-format";
 
 async function createStackController(req: Request, res: Response) {
-  const { user, stackName } = userStackNameBodyValidator.parse(req.body);
-  const params = [user.id, stackName];
+  const { user, stack_name, data } = userStackNameBodyValidator.parse(req.body);
+  const params = [user.id, stack_name];
 
-  pool.query(insertStackQuery, params);
-  return res.send(201).send("Cucessfully Created");
+  const result = await pool.query(insertStackQuery, params);
+  const stack_id = result.rows[0].stack_id;
+
+  const insertParams = [];
+
+  for (let i = 0; i < data.length; i++) {
+    insertParams.push([
+      stack_id,
+      data[i].question_id,
+      data[i].question,
+      data[i].answer,
+    ]);
+  }
+  console.log(format(
+    "INSERT INTO questions (stack_id, question_id, question, answer) VALUES %L",
+    insertParams,
+  ));
+  return res.status(201).send("Sucessfully Created");
 }
 
 async function getAllStackController(req: Request, res: Response) {
@@ -25,7 +42,7 @@ async function getAllStackController(req: Request, res: Response) {
 
   const result = await pool.query(getAllStackQuery, [user.id]);
 
-  if (!result.rowCount) return res.status(200).send("No Stacks Created");
+  if (!result.rowCount) return res.status(204).json("No Stacks Created");
 
   return res.json(result.rows);
 }
@@ -41,9 +58,9 @@ async function deleteStackController(req: Request, res: Response) {
 }
 
 async function updateStackController(req: Request, res: Response) {
-  const { user, stackName } = userStackNameBodyValidator.parse(req.body);
+  const { user, stack_name } = userStackNameBodyValidator.parse(req.body);
   const stackId = stackIdValidator.parse(req.params.id);
-  const params = [stackName, stackId, user.id];
+  const params = [stack_name, stackId, user.id];
 
   pool.query(updateStackQuery, params);
   return res.status(200).send("Sucessfully created");

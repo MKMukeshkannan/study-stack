@@ -10,8 +10,8 @@ import {
 export interface AddQuestinoState {
   question: QuestionType[];
   setQuestion: Dispatch<SetStateAction<QuestionType[]>>;
-  formVal: QuestionType;
-  setFormVal: Dispatch<SetStateAction<QuestionType>>;
+  formVal: QuestionType | null;
+  setFormVal: Dispatch<SetStateAction<QuestionType | null>>;
   nextId: MutableRefObject<number>;
 }
 

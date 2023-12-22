@@ -9,7 +9,7 @@ interface stack {
 }
 
 export default function Home() {
-  const [stacks, setStacks] = useState<stack[]>();
+  const [stacks, setStacks] = useState<stack[]>([]);
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,7 +23,7 @@ export default function Home() {
         const response = await axiosPrivate.get("/api/v1/stack/get-stacks", {
           signal: controller.signal,
         });
-        isMounted && setStacks(response.data);
+        isMounted && response.status !== 204 && setStacks(response.data);
       } catch (e: any) {
         if (e?.name === "CanceledError") console.log("Request Is Aborted");
         else {
@@ -43,9 +43,9 @@ export default function Home() {
 
   return (
     <section>
-      {!stacks?.length
+      {stacks?.length <= 0
         ? <h1>No Stacks Created</h1>
-        : stacks?.map((stack) => (
+        : stacks.map((stack) => (
           <StackTile key={stack.stack_id} name={stack.stack_name} />
         ))}
     </section>

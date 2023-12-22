@@ -12,14 +12,14 @@ const REFRESH_SECRET: string | undefined = process.env.REFRESH_TOKEN_SECRET;
 const getAccessToken = (payload: any) => {
   if (!JWT_SECRET) throw new Error("Invalid Secret");
 
-  const token = sign(payload, JWT_SECRET, { expiresIn: "10s" });
+  const token = sign(payload, JWT_SECRET, { expiresIn: "1d" });
   return token;
 };
 
 const getRefreshToken = (payload: any) => {
   if (!REFRESH_SECRET) throw new Error("Invalid Secret");
 
-  const token = sign(payload, REFRESH_SECRET, { expiresIn: "1d" });
+  const token = sign(payload, REFRESH_SECRET, { expiresIn: "30d" });
   return token;
 };
 

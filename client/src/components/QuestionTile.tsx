@@ -27,7 +27,7 @@ const QuestionTile = (
   return (
     <>
       {question.map((value) => (
-        value.question_id !== -1 &&
+        value &&
         (
           <section
             key={value.question_id}

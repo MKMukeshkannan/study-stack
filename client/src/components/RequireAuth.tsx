@@ -5,6 +5,7 @@ export default function RequireAuth() {
   const { auth } = useAuthContext();
   const location = useLocation();
 
+  console.log(auth)
   return (
     auth?.access_token
       ? <Outlet />

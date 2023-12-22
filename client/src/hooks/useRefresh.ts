@@ -10,9 +10,10 @@ export default function useRefresh() {
       withCredentials: true,
     });
 
-    setAuth((prev) => {
-      if (!prev) return null;
-      return { ...prev, access_token: response.data };
+    setAuth({
+      name: response.data.name,
+      email: response.data.email,
+      access_token: response.data.access_token,
     });
 
     return response.data;

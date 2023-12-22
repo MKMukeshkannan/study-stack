@@ -12,7 +12,7 @@ const AddNewQuestionButton = (
       <section
         onClick={() => {
           setOpen(true);
-          setFormVal({ question_id: -1, question: "", answer: "" });
+          setFormVal(null);
         }}
         className="flex flex-col items-center justify-center cursor-pointer hover:text-black"
       >

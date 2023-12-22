@@ -64,6 +64,27 @@ const questionsPostValidator = z.object({
     .max(50, "Answer can be atmost 50 characters long !"),
 });
 
+const questionPostValidator = z.object({
+  stack_name: z.string({
+    required_error: "StackName Required",
+  }).min(3).max(12),
+  data: z.array(z.object({
+    question_id: z.number({
+      required_error: "Required 'question_id' feild",
+    }),
+    question: z.string({
+      required_error: "Required 'question' feild",
+    })
+      .min(4, "Question Should be atleast 4 characters long !")
+      .max(50, "Question can be atmost 50 characters long !"),
+    answer: z.string({
+      required_error: "Required 'answer' feild",
+    })
+      .min(4, "Answer Should be atleast 4 characters long !")
+      .max(50, "Answer can be atmost 50 characters long !"),
+  })).min(1).max(20),
+});
+
 const questionUpdateValidator = questionsPostValidator
   .omit({
     question_id: true,
@@ -72,10 +93,14 @@ const questionUpdateValidator = questionsPostValidator
 
 type QuestionType = z.infer<typeof questionsPostValidator>;
 
+type QuestionPostType = z.infer<typeof questionPostValidator>;
+
 type UserType = z.infer<typeof UserSchema>;
 
 export {
   questionIdValidator,
+  type QuestionPostType,
+  questionPostValidator,
   questionsPostValidator,
   type QuestionType,
   questionUpdateValidator,

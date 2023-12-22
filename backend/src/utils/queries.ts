@@ -2,7 +2,7 @@ const insertUserQuery =
   "INSERT INTO authuser(name, email, password) VALUES($1, $2, $3)";
 const getUserEmailQuery = "SELECT * FROM authuser WHERE email = $1";
 const insertStackQuery =
-  "INSERT INTO stack (user_id, stack_name) VALUES ($1, $2)";
+  "INSERT INTO stack (user_id, stack_name) VALUES ($1, $2) RETURNING stack_id";
 const getAllStackQuery = "SELECT * FROM stack WHERE user_id = $1";
 const deleteStackQuery =
   "DELETE FROM stack WHERE stack_id = $1 AND user_id = $2";

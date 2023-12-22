@@ -8,11 +8,7 @@ interface props {
 
 export default function AddQuestionContextProvider({ children }: props) {
   const [question, setQuestion] = useState<QuestionType[]>([]);
-  const [formVal, setFormVal] = useState<QuestionType>({
-    question_id: -1,
-    question: "",
-    answer: "",
-  });
+  const [formVal, setFormVal] = useState<QuestionType | null>(null);
   const nextId = useRef<number>(1)
 
   return (
