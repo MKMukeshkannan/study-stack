@@ -17,7 +17,7 @@ route.post(
 );
 
 route.get(
-  "/get-questions/:question_id",
+  "/get-questions/:stack_id",
   [authrizeToken, authorizeUserStack],
   asyncMiddleware(getAllQuestion),
 );

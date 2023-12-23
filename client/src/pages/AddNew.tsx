@@ -21,8 +21,8 @@ export default function AddNew() {
       resolver: zodResolver(questionPostValidator),
     });
 
-  const { question, setQuestion, setFormVal } = useAddQuestionHook();
-  const axiosPrivate = useAxiosPrivate()
+  const { nextId, question, setQuestion, setFormVal } = useAddQuestionHook();
+  const axiosPrivate = useAxiosPrivate();
 
   useEffect(() => {
     setValue("data", question);
@@ -37,6 +37,7 @@ export default function AddNew() {
       reset();
       setQuestion([]);
       setFormVal(null);
+      nextId.current = 1;
     } catch (e) {
       console.log(e);
     }

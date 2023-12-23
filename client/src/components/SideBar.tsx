@@ -11,9 +11,11 @@ import IconText from "./IconText";
 import { useSideBarContext } from "@/context/SideBarContext";
 import { Link, useNavigate } from "react-router-dom";
 import useLogout from "@/hooks/useLogout";
+import { useAuthContext } from "@/context/AuthContext";
 
 export default function SideBar() {
   const { isOpen, setIsOpen } = useSideBarContext();
+  const { auth } = useAuthContext();
   const navigate = useNavigate();
   const logoutCall = useLogout();
 
@@ -36,12 +38,12 @@ export default function SideBar() {
       >
         <IconX />
       </section>
-      <section className=" flex flex-col items-center justify-center">
-        <Avatar className="h-20 w-20">
+      <section className=" flex flex-col items-center justify-center space-y-1">
+        <Avatar className="h-20 w-20 mb-2">
           <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
-        <Link to="/me" className="text-xl font-bold">Mukesh Kannan</Link>
+        <Link to="/me" className="text-xl font-bold">{auth?.name}</Link>
         <p className="text-xs font-mono">Lvl. 1</p>
       </section>
 

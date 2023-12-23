@@ -31,13 +31,15 @@ async function authorizeUserStack(
   const stack_id = req.params.stack_id;
   const getUserStack =
     "SELECT * FROM stack WHERE stack_id = $1 AND user_id = $2;";
-  const params = [stack_id, user.id];
+  const params = [parseInt(stack_id), user.id];
 
   try {
     const result = await pool.query(getUserStack, params);
     if (result.rowCount === 0) {
       return res.status(404).json({ sucess: false, error: "Not your stack" });
     }
+    req.body.user = user;
+    req.body.stack_id = parseInt(stack_id);
   } catch (e) {
     return res.status(500).json({
       sucess: false,

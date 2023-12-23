@@ -30,7 +30,7 @@ async function createStackController(req: Request, res: Response) {
       data[i].answer,
     ]);
   }
-  console.log(format(
+  await pool.query(format(
     "INSERT INTO questions (stack_id, question_id, question, answer) VALUES %L",
     insertParams,
   ));

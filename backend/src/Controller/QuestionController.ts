@@ -24,7 +24,8 @@ async function createQuestion(req: Request, res: Response) {
 }
 
 async function getAllQuestion(req: Request, res: Response) {
-  const stackId = stackIdValidator.parse(req.params.question_id);
+  const stackId = stackIdValidator.parse(req.body.stack_id);
+  console.log(stackId)
   const result = await pool.query(getQuestionsQuery, [stackId]);
   if (!result.rowCount) {
     return res.status(200).send("No questions in this stack");
