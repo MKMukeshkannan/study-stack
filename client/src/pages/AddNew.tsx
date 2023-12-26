@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 
 export default function AddNew() {
   const [isOpen, setOpen] = useState<boolean>(false);
+  const [isMax, setMax] = useState<boolean>(false);
 
   const { register, setValue, handleSubmit, formState: { errors }, reset } =
     useForm<
@@ -48,8 +49,9 @@ export default function AddNew() {
       <section className="flex h-0 flex-auto flex-row p-5">
         <section
           className={cn(
-            "bg-white rounded-xl p-7 shadow relative overflow-y-auto w-full",
-            isOpen && "hidden lg:block lg:mr-5",
+            "bg-white rounded-xl p-7 shadow relative overflow-y-auto w-full lg:min-w-[700px] lg:mr-5",
+            isOpen && "hidden lg:block ",
+            isMax && "lg:hidden "
           )}
         >
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -89,6 +91,8 @@ export default function AddNew() {
         <AddQuestionSidebar
           isOpen={isOpen}
           setOpen={setOpen}
+          setMax={setMax}
+          isMax={isMax}
         />
       </section>
     </>

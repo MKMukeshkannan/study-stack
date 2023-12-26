@@ -1,5 +1,9 @@
 import { cn } from "@/lib/utils";
-import { IconX } from "@tabler/icons-react";
+import {
+  IconArrowsDiagonal2,
+  IconArrowsDiagonalMinimize,
+  IconX,
+} from "@tabler/icons-react";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { Dispatch, SetStateAction, useEffect } from "react";
@@ -11,9 +15,11 @@ import { useAddQuestionHook } from "@/context/AddQuestionContext";
 interface props {
   isOpen: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  isMax: boolean;
+  setMax: Dispatch<SetStateAction<boolean>>;
 }
 
-const AddQuestion = ({ isOpen, setOpen }: props) => {
+const AddQuestion = ({ isOpen, setOpen, isMax, setMax }: props) => {
   const { question, setQuestion, formVal, nextId, setFormVal } =
     useAddQuestionHook();
 
@@ -64,18 +70,28 @@ const AddQuestion = ({ isOpen, setOpen }: props) => {
   return (
     <section
       className={cn(
-        "relative bg-white h-full wfull min-w-[200px] md:min-w-[400px] rounded-xl p-7 shadow transition-all duration-500",
+        "relative bg-white h-full w-full min-w-[200px] rounded-xl p-7 shadow transition-all duration-500",
         !isOpen && "hidden",
       )}
     >
       <section
         onClick={() => {
           setOpen(false);
+          setMax(false)
         }}
         className="absolute top-5 right-5 cursor-pointer"
       >
         <IconX />
       </section>
+      <section
+        onClick={() => {
+          setMax((prev) => !prev);
+        }}
+        className="absolute hidden md:inline-block top-5 right-12 cursor-pointer"
+      >
+        {isMax ? <IconArrowsDiagonalMinimize /> : <IconArrowsDiagonal2 />}
+      </section>
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col h-full w-full gap-5"
