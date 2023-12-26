@@ -64,7 +64,7 @@ const AddQuestion = ({ isOpen, setOpen }: props) => {
   return (
     <section
       className={cn(
-        "relative bg-white h-full min-w-[400px] rounded-xl p-7 shadow transition-all duration-500",
+        "relative bg-white h-full wfull min-w-[200px] md:min-w-[400px] rounded-xl p-7 shadow transition-all duration-500",
         !isOpen && "hidden",
       )}
     >

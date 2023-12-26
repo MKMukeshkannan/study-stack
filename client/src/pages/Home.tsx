@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import QuestionList from "@/components/ViewQuestionList";
+import { IconX } from "@tabler/icons-react";
 
 export interface stack {
   stack_name: string;
@@ -53,6 +54,13 @@ export default function Home() {
           isOpen && "hidden lg:block lg:mr-5",
         )}
       >
+        <section className="w-full flex flex-col items-center gap-8 h-fit md:flex-row md:h-[250px] bg-red-200 mb-5 p-4 px-10 rounded-xl">
+          <section className="flex-auto text-center md:text-left ">
+            <h1 className=" text-5xl font-bold">Welcome Back</h1>
+            <h1>your progress is given below</h1>
+          </section>
+          <img src="/MathematicsIllustr.svg" className="h-full max-h-52" />
+        </section>
         <section className="flex flex-row flex-wrap gap-4 justify-center sm:justify-start">
           {stacks?.length <= 0
             ? <h1>No Stacks Created</h1>
@@ -70,10 +78,18 @@ export default function Home() {
 
       <section
         className={cn(
-          "relative bg-white h-full min-w-[400px] rounded-xl p-7 shadow transition-all duration-500 overflow-auto",
+          "relative bg-white h-full min-w-[200px] lg:min-w-[350px] rounded-xl p-7 shadow transition-all duration-500 overflow-auto",
           !isOpen && "hidden",
         )}
       >
+        <section
+          onClick={() => {
+            setOpen(false);
+          }}
+          className="absolute top-5 right-5 cursor-pointer"
+        >
+          <IconX />
+        </section>
         <QuestionList
           stack_name={viewStack?.stack_name || ""}
           stack_id={viewStack?.stack_id || -1}
