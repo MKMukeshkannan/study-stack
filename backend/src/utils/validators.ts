@@ -41,12 +41,12 @@ const questionsPostValidator = z.object({
     required_error: "Required 'question' feild",
   })
     .min(4, "Question Should be atleast 4 characters long !")
-    .max(50, "Question can be atmost 50 characters long !"),
+    .max(500, "Question can be atmost 500 characters long !"),
   answer: z.string({
     required_error: "Required 'answer' feild",
   })
     .min(4, "Answer Should be atleast 4 characters long !")
-    .max(50, "Answer can be atmost 50 characters long !"),
+    .max(1000, "Answer can be atmost 1000 characters long !"),
 });
 
 const questionUpdateValidator = questionsPostValidator
@@ -67,12 +67,12 @@ const questionPostValidator = z.object({
       required_error: "Required 'question' feild",
     })
       .min(4, "Question Should be atleast 4 characters long !")
-      .max(50, "Question can be atmost 50 characters long !"),
+      .max(500, "Question can be atmost 500 characters long !"),
     answer: z.string({
       required_error: "Required 'answer' feild",
     })
       .min(4, "Answer Should be atleast 4 characters long !")
-      .max(50, "Answer can be atmost 50 characters long !"),
+      .max(1000, "Answer can be atmost 1000 characters long !"),
   })).min(1).max(20),
 });
 
@@ -89,12 +89,12 @@ const userStackNameBodyValidator = z.object({
       required_error: "Required 'question' feild",
     })
       .min(4, "Question Should be atleast 4 characters long !")
-      .max(50, "Question can be atmost 50 characters long !"),
+      .max(500, "Question can be atmost 500 characters long !"),
     answer: z.string({
       required_error: "Required 'answer' feild",
     })
       .min(4, "Answer Should be atleast 4 characters long !")
-      .max(50, "Answer can be atmost 50 characters long !"),
+      .max(1000, "Answer can be atmost 1000 characters long !"),
   })).min(1).max(20),
 });
 

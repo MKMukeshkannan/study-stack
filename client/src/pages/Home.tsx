@@ -78,7 +78,7 @@ export default function Home() {
 
       <section
         className={cn(
-          "relative bg-white h-full min-w-[200px] lg:min-w-[350px] rounded-xl p-7 shadow transition-all duration-500 overflow-auto",
+          "relative bg-white h-full min-w-[200px] lg:max-w-xs lg:min-w-[350px] rounded-xl p-7 shadow transition-all duration-500 overflow-auto",
           !isOpen && "hidden",
         )}
       >
