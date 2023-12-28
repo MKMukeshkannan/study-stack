@@ -2,15 +2,18 @@ import { cn } from "@/lib/utils";
 import {
   IconArrowsDiagonal2,
   IconArrowsDiagonalMinimize,
+  IconMarkdown,
   IconX,
 } from "@tabler/icons-react";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { questionsPostValidator, QuestionType } from "@/lib/validators";
 import { useAddQuestionHook } from "@/context/AddQuestionContext";
+import { Toggle } from "./ui/toggle";
 
 interface props {
   isOpen: boolean;
@@ -37,6 +40,7 @@ const AddQuestion = ({ isOpen, setOpen, isMax, setMax }: props) => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    getValues,
     reset,
     setValue,
   } = useForm<QuestionType>({
@@ -67,6 +71,8 @@ const AddQuestion = ({ isOpen, setOpen, isMax, setMax }: props) => {
     setQuestion(newData);
   };
 
+  const [isMarkDown, setMarkDown] = useState<boolean>(false);
+
   return (
     <section
       className={cn(
@@ -77,7 +83,7 @@ const AddQuestion = ({ isOpen, setOpen, isMax, setMax }: props) => {
       <section
         onClick={() => {
           setOpen(false);
-          setMax(false)
+          setMax(false);
         }}
         className="absolute top-5 right-5 cursor-pointer"
       >
@@ -101,18 +107,39 @@ const AddQuestion = ({ isOpen, setOpen, isMax, setMax }: props) => {
           {...register("question")}
           placeholder="Question"
           className={cn(
-            "flex-1 text-xl",
+            "flex-1 text-md font-mono",
             errors.question && "border-4 border-dashed border-red-500",
           )}
         />
-        <Textarea
-          {...register("answer")}
-          placeholder="Answer"
-          className={cn(
-            "flex-[3] text-xl",
-            errors.answer && "border-4 border-dashed border-red-500",
-          )}
-        />
+        <section className="relative h-0 flex-[3] ">
+          {!isMarkDown
+            ? (
+              <Textarea
+                {...register("answer")}
+                placeholder="Answer"
+                className={cn(
+                  "h-full text-md font-mono",
+                  errors.answer && "border-4 border-dashed border-red-500",
+                )}
+              >
+              </Textarea>
+            )
+            : (
+              <ReactMarkdown
+                children={getValues("answer") ||
+                  "**Change Markdown mode to edit**"}
+                className="p-3 border-slate-200 border w-full h-full overflow-y-auto rounded-md"
+              >
+              </ReactMarkdown>
+            )}
+          <Toggle
+            className="h-10 w-10 absolute right-0 top-0 m-2"
+            aria-label="Toggle markdown"
+            onPressedChange={(e) => setMarkDown(e.valueOf())}
+          >
+            <IconMarkdown />
+          </Toggle>
+        </section>
         {formVal
           ? (
             <>
