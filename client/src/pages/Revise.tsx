@@ -12,10 +12,12 @@ interface QuestionType {
 }
 
 export default function Revise() {
-  const questionsRevised = useRef<number>(0);
+  const [questionsRevised, setQuestionRevised] = useState<number>(0);
   const questions = useRef<QuestionType[]>([]);
   const questionQueue = useRef<number[]>([]);
   const [isLoading, setLoading] = useState<boolean>(true);
+  const [isRevised, setRevised] = useState<boolean>(false);
+  const questionOccurance = useRef<Map<number, number>>(new Map());
 
   const queueTop: number = questionQueue.current[0];
 
@@ -130,11 +132,18 @@ export default function Revise() {
     ];
 
     const currentDate = new Date();
+
     const selectedQuestions: number[] = [];
     for (let i = 0; i < questions.current.length; i++) {
       if (
-        currentDate.getDate()  - questions.current[i].lastRevised.getDate() >  3
+        currentDate.getDate() - questions.current[i].lastRevised.getDate() > 3
       ) {
+        selectedQuestions.push(i);
+      }
+    }
+
+    if (selectedQuestions.length < 4) {
+      for (let i = 0; i < questions.current.length; i++) {
         selectedQuestions.push(i);
       }
     }
@@ -146,8 +155,45 @@ export default function Revise() {
 
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
 
+  const randomIndex = (min: number, max: number) => {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+
+  const handleNextButton = (difficulty: number) => {
+    if (questionsRevised >= 20 || questionQueue.current.length <= 1) {
+      return setRevised(true);
+    }
+
+    const occurance = questionOccurance.current?.get(queueTop) || 0;
+    const changedQueue = questionQueue.current;
+
+    if (difficulty == 1 && occurance < 1) {
+      const end = changedQueue.length > 5 ? 3 : changedQueue.length;
+      const pos = randomIndex(2, end);
+
+      questionOccurance.current.set(queueTop, occurance + 1);
+      changedQueue.splice(pos, 0, queueTop);
+    } else if (difficulty == 2 && occurance < 2) {
+      const end = changedQueue.length > 5 ? 3 : changedQueue.length;
+      const pos = randomIndex(2, end);
+
+      questionOccurance.current.set(queueTop, occurance + 1);
+      changedQueue.splice(pos, 0, queueTop);
+    } else if (difficulty == 3 && occurance < 3) {
+      const end = changedQueue.length > 5 ? 3 : changedQueue.length;
+      const pos = randomIndex(2, end);
+
+      questionOccurance.current.set(queueTop, occurance + 1);
+      changedQueue.splice(pos, 0, queueTop);
+    }
+
+    setShowAnswer(false);
+    setQuestionRevised((prev) => prev + 1);
+    questionQueue.current = changedQueue.splice(1);
+  };
+
   if (isLoading) return <h1>Loading</h1>;
-  console.log(questionQueue)
+  if (isRevised) return <h1>Results</h1>;
 
   return (
     <section className="flex flex-auto h-0 p-6">
@@ -158,7 +204,7 @@ export default function Revise() {
 
         <section
           className={cn(
-            "rounded-xl bg-sky-200 w-full min-h-[130px] p-6 transition-all duration-1000",
+            "rounded-xl bg-sky-200 w-full min-h-[130px] p-6 ",
             showAnswer ? "max-h-[100px]" : "max-h-[300px]",
           )}
         >
@@ -169,12 +215,12 @@ export default function Revise() {
 
         <section
           className={cn(
-            "rounded-xl bg-sky-200 w-full  min-h-[130px] max-h-[300px] p-6  transition-all duration-1000 delay-500",
+            "rounded-xl bg-sky-200 w-full  min-h-[130px] max-h-[300px] p-6",
             !showAnswer && " max-h-0 opacity-0",
           )}
         >
           <ReactMarkdown className="text-xl font-semibold text-center h-full overflow-y-auto">
-            {questions.current[queueTop].question}
+            {questions.current[queueTop].answer}
           </ReactMarkdown>
         </section>
 
@@ -189,9 +235,9 @@ export default function Revise() {
             )
             : (
               <>
-                <Button>Easy</Button>
-                <Button>Medium</Button>
-                <Button>Hard</Button>
+                <Button onClick={() => handleNextButton(1)}>Easy</Button>
+                <Button onClick={() => handleNextButton(2)}>Medium</Button>
+                <Button onClick={() => handleNextButton(3)}>Hard</Button>
               </>
             )}
         </section>
