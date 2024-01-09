@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 
 interface QuestionType {
@@ -10,6 +10,16 @@ interface QuestionType {
   difficulty: number;
   lastRevised: Date;
 }
+
+const SectionWraper = ({ children }: { children: ReactNode }) => {
+  return (
+    <section className="flex flex-auto h-0 p-6">
+      <section className="flex flex-col gap-5 justify-center items-center bg-white rounded-xl p-7 py-16 relative overflow-y-auto w-full lg:px-16">
+        {children}
+      </section>
+    </section>
+  );
+};
 
 export default function Revise() {
   const [questionsRevised, setQuestionRevised] = useState<number>(0);
@@ -192,56 +202,28 @@ export default function Revise() {
     questionQueue.current = changedQueue.splice(1);
   };
 
-  if (isLoading) return <h1>Loading</h1>;
-  if (isRevised) return <h1>Results</h1>;
+  if (isLoading) {
+    return (
+      <SectionWraper>
+        <div
+          className="animate-spin inline-block w-8 h-8 border-[3px] border-current border-t-transparent text-blue-600 rounded-full dark:text-blue-500"
+          role="status"
+          aria-label="loading"
+        >
+          <span className="sr-only">Loading...</span>
+        </div>
+        <h1 className="text-xl font-bold">Loading</h1>
+      </SectionWraper>
+    );
+  }
+  if (isRevised) return <SectionWraper>Results</SectionWraper>;
 
   return (
-    <section className="flex flex-auto h-0 p-6">
-      <section className="flex flex-col gap-5 justify-center items-center bg-white rounded-xl p-7 py-16 relative overflow-y-auto w-full lg:px-16">
-        <h1 className="text-xl absolute right-7 top-7 font-bold">
-          Personal Details
-        </h1>
+    <SectionWraper>
+      <h1 className="text-xl absolute right-7 top-7 font-bold">
+        Personal Details
+      </h1>
 
-        <section
-          className={cn(
-            "rounded-xl bg-sky-200 w-full min-h-[130px] p-6 ",
-            showAnswer ? "max-h-[100px]" : "max-h-[300px]",
-          )}
-        >
-          <h1 className="text-xl font-semibold text-center h-full overflow-y-auto">
-            {questions.current[queueTop].question}
-          </h1>
-        </section>
-
-        <section
-          className={cn(
-            "rounded-xl bg-sky-200 w-full  min-h-[130px] max-h-[300px] p-6",
-            !showAnswer && " max-h-0 opacity-0",
-          )}
-        >
-          <ReactMarkdown className="text-xl font-semibold text-center h-full overflow-y-auto">
-            {questions.current[queueTop].answer}
-          </ReactMarkdown>
-        </section>
-
-        <section className="flex space-x-2 absolute bottom-4">
-          {!showAnswer
-            ? (
-              <Button
-                onClick={() => setShowAnswer((prev) => !prev)}
-              >
-                Reveal Answer
-              </Button>
-            )
-            : (
-              <>
-                <Button onClick={() => handleNextButton(1)}>Easy</Button>
-                <Button onClick={() => handleNextButton(2)}>Medium</Button>
-                <Button onClick={() => handleNextButton(3)}>Hard</Button>
-              </>
-            )}
-        </section>
-      </section>
-    </section>
+     </SectionWraper>
   );
 }
