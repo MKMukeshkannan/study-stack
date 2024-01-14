@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { ReactNode, useEffect, useRef, useState } from "react";
+
+import { Swiper, SwiperRef, SwiperSlide } from "swiper/react";
+import { EffectFlip } from "swiper/modules";
+import "swiper/css";
+
 import ReactMarkdown from "react-markdown";
 
 interface QuestionType {
@@ -25,6 +29,7 @@ export default function Revise() {
   const [questionsRevised, setQuestionRevised] = useState<number>(0);
   const questions = useRef<QuestionType[]>([]);
   const questionQueue = useRef<number[]>([]);
+  const AnswerFlipSwiperRef = useRef<SwiperRef>(null);
   const [isLoading, setLoading] = useState<boolean>(true);
   const [isRevised, setRevised] = useState<boolean>(false);
   const questionOccurance = useRef<Map<number, number>>(new Map());
@@ -33,6 +38,7 @@ export default function Revise() {
 
   useEffect(() => {
     setLoading(true);
+
     questions.current = [
       {
         question_id: 1,
@@ -197,9 +203,15 @@ export default function Revise() {
       changedQueue.splice(pos, 0, queueTop);
     }
 
+    AnswerFlipSwiperRef.current?.swiper.slideTo(0)
     setShowAnswer(false);
     setQuestionRevised((prev) => prev + 1);
     questionQueue.current = changedQueue.splice(1);
+  };
+
+  const handleShowButton = () => {
+    AnswerFlipSwiperRef.current?.swiper.slideNext();
+    setShowAnswer(true);
   };
 
   if (isLoading) {
@@ -224,6 +236,40 @@ export default function Revise() {
         Personal Details
       </h1>
 
-     </SectionWraper>
+      <Swiper
+        flipEffect={{ slideShadows: false }}
+        modules={[EffectFlip]}
+        effect="flip"
+        className="w-full h-96 rounded-lg py-10 text-xl lg:w-[400px]"
+        ref={AnswerFlipSwiperRef}
+        allowTouchMove={false}
+      >
+        <SwiperSlide className="bg-red-200 flex items-center justify-center text-center rounded-lg p-5">
+          {questions.current[queueTop].question}
+        </SwiperSlide>
+
+        <SwiperSlide className="bg-red-200 rounded-lg p-5">
+          <ReactMarkdown className="h-full flex items-center justify-center text-center overflow-auto">
+            {questions.current[queueTop].answer}
+          </ReactMarkdown>
+        </SwiperSlide>
+      </Swiper>
+
+      <section className="flex space-x-2 absolute bottom-4">
+        {!showAnswer
+          ? (
+            <Button onClick={handleShowButton}>
+              Reveal Answer
+            </Button>
+          )
+          : (
+            <>
+              <Button onClick={() => handleNextButton(1)}>Easy</Button>
+              <Button onClick={() => handleNextButton(2)}>Medium</Button>
+              <Button onClick={() => handleNextButton(3)}>Hard</Button>
+            </>
+          )}
+      </section>
+    </SectionWraper>
   );
 }
