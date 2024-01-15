@@ -9,6 +9,9 @@ import { IconX } from "@tabler/icons-react";
 export interface stack {
   stack_name: string;
   stack_id: number;
+  image_url: string;
+  last_revised: Date;
+  confidence: number;
 }
 
 export default function Home() {
@@ -29,6 +32,7 @@ export default function Home() {
           signal: controller.signal,
         });
         isMounted && response.status !== 204 && setStacks(response.data);
+        console.log(response.data)
       } catch (e: any) {
         if (e?.name === "CanceledError") console.log("Request Is Aborted");
         else {
@@ -67,8 +71,7 @@ export default function Home() {
             : stacks.map((stack) => (
               <StackTile
                 key={stack.stack_id}
-                stack_name={stack.stack_name}
-                stack_id={stack.stack_id}
+                stack={stack}
                 setOpen={setOpen}
                 setViewStack={setViewStack}
               />

@@ -2,6 +2,7 @@ import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 import { QuestionType } from "@/lib/validators";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "./ui/button";
 
 interface props {
   stack_name: string;
@@ -69,6 +70,7 @@ const ViewQuestionList = ({ stack_id, stack_name, setOpen }: props) => {
           )}
         </section>
       ))}
+      <Button>Revise</Button>
     </section>
   );
 };
