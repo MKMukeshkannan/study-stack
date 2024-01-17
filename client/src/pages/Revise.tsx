@@ -6,13 +6,16 @@ import { EffectFlip } from "swiper/modules";
 import "swiper/css";
 
 import ReactMarkdown from "react-markdown";
+import { useNavigate, useParams } from "react-router-dom";
+import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
 interface QuestionType {
+  stack_id: number;
   question_id: number;
   question: string;
   answer: string;
   difficulty: number;
-  lastRevised: Date;
+  last_revised: string;
 }
 
 const SectionWraper = ({ children }: { children: ReactNode }) => {
@@ -27,7 +30,14 @@ const SectionWraper = ({ children }: { children: ReactNode }) => {
 
 export default function Revise() {
   const [questionsRevised, setQuestionRevised] = useState<number>(0);
-  const questions = useRef<QuestionType[]>([]);
+  const [questions, setQuestions] = useState<QuestionType[]>([{
+    question: "",
+    answer: "",
+    difficulty: 3,
+    last_revised: "",
+    question_id: -1,
+    stack_id: -1,
+  }]);
   const questionQueue = useRef<number[]>([]);
   const AnswerFlipSwiperRef = useRef<SwiperRef>(null);
   const [isLoading, setLoading] = useState<boolean>(true);
@@ -36,138 +46,68 @@ export default function Revise() {
 
   const queueTop: number = questionQueue.current[0];
 
+  const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
+
+  const { id } = useParams();
+  const stack_id = parseInt(id || "-1");
+
   useEffect(() => {
     setLoading(true);
+    let isMounted = true;
+    const controller = new AbortController();
 
-    questions.current = [
-      {
-        question_id: 1,
-        question: "What is the capital of Spain?",
-        answer: "Madrid",
-        difficulty: 2,
-        lastRevised: new Date("2024-01-01"),
-      },
-      {
-        question_id: 2,
-        question: "Who wrote 'The Great Gatsby'?",
-        answer: "F. Scott Fitzgerald",
-        difficulty: 3,
-        lastRevised: new Date("2024-01-02"),
-      },
-      {
-        question_id: 3,
-        question: "What is the chemical symbol for gold?",
-        answer: "Au",
-        difficulty: 1,
-        lastRevised: new Date("2024-01-03"),
-      },
-      {
-        question_id: 4,
-        question: "Which planet is known as the Red Planet?",
-        answer: "Mars",
-        difficulty: 2,
-        lastRevised: new Date("2024-01-04"),
-      },
-      {
-        question_id: 5,
-        question: "Who wrote 'To Kill a Mockingbird'?",
-        answer: "Harper Lee",
-        difficulty: 3,
-        lastRevised: new Date("2024-01-05"),
-      },
-      {
-        question_id: 6,
-        question: "What is the world's largest ocean?",
-        answer: "Pacific Ocean",
-        difficulty: 2,
-        lastRevised: new Date("2024-01-01"),
-      },
-      {
-        question_id: 7,
-        question: "Who discovered penicillin?",
-        answer: "Alexander Fleming",
-        difficulty: 3,
-        lastRevised: new Date("2024-01-02"),
-      },
-      {
-        question_id: 8,
-        question: "What is the square root of 64?",
-        answer: "8",
-        difficulty: 1,
-        lastRevised: new Date("2024-01-03"),
-      },
-      {
-        question_id: 9,
-        question: "Which gas do plants absorb during photosynthesis?",
-        answer: "Carbon dioxide",
-        difficulty: 2,
-        lastRevised: new Date("2024-01-04"),
-      },
-      {
-        question_id: 10,
-        question: "Who is known as the 'Father of Computer Science'?",
-        answer: "Alan Turing",
-        difficulty: 3,
-        lastRevised: new Date("2024-01-05"),
-      },
-      {
-        question_id: 11,
-        question: "What is the largest mammal on Earth?",
-        answer: "Blue whale",
-        difficulty: 2,
-        lastRevised: new Date("2024-01-01"),
-      },
-      {
-        question_id: 12,
-        question: "Who developed the theory of relativity?",
-        answer: "Albert Einstein",
-        difficulty: 3,
-        lastRevised: new Date("2024-01-02"),
-      },
-      {
-        question_id: 13,
-        question: "In which year did the Titanic sink?",
-        answer: "1912",
-        difficulty: 1,
-        lastRevised: new Date("2024-01-03"),
-      },
-      {
-        question_id: 14,
-        question: "What is the currency of Japan?",
-        answer: "Japanese Yen",
-        difficulty: 2,
-        lastRevised: new Date("2024-01-04"),
-      },
-      {
-        question_id: 15,
-        question: "Who is the author of '1984'?",
-        answer: "George Orwell",
-        difficulty: 3,
-        lastRevised: new Date("2024-01-05"),
-      },
-    ];
-
-    const currentDate = new Date();
-
-    const selectedQuestions: number[] = [];
-    for (let i = 0; i < questions.current.length; i++) {
-      if (
-        currentDate.getDate() - questions.current[i].lastRevised.getDate() > 3
-      ) {
-        selectedQuestions.push(i);
+    const getQuestions = async () => {
+      try {
+        const response = await axiosPrivate.get(
+          `/api/v1/question/get-questions/${stack_id}`,
+          {
+            signal: controller.signal,
+          },
+        );
+        isMounted && response.status !== 204 && setQuestions(response.data);
+      } catch (e: any) {
+        if (e?.name === "CanceledError") console.log("Request Is Aborted");
+        else {
+          console.log(e);
+          navigate("/");
+        }
       }
-    }
+    };
 
-    if (selectedQuestions.length < 4) {
-      for (let i = 0; i < questions.current.length; i++) {
-        selectedQuestions.push(i);
+    getQuestions();
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [stack_id]);
+
+  useEffect(() => {
+    const initializeQueue = () => {
+      const currentDate = new Date();
+
+      const selectedQuestions: number[] = [];
+      for (let i = 0; i < questions.length; i++) {
+        if (
+          currentDate.getDate() -
+              new Date(questions[i].last_revised).getDate() >
+            3
+        ) {
+          selectedQuestions.push(i);
+        }
       }
-    }
 
-    questionQueue.current = selectedQuestions;
+      if (selectedQuestions.length < 4) {
+        for (let i = 0; i < questions.length; i++) {
+          selectedQuestions.push(i);
+        }
+      }
 
-    setLoading(false);
-  }, []);
+      questionQueue.current = selectedQuestions;
+      setLoading(false);
+    };
+    initializeQueue();
+  }, [questions]);
 
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
 
@@ -203,7 +143,7 @@ export default function Revise() {
       changedQueue.splice(pos, 0, queueTop);
     }
 
-    AnswerFlipSwiperRef.current?.swiper.slideTo(0)
+    AnswerFlipSwiperRef.current?.swiper.slideTo(0);
     setShowAnswer(false);
     setQuestionRevised((prev) => prev + 1);
     questionQueue.current = changedQueue.splice(1);
@@ -228,7 +168,9 @@ export default function Revise() {
       </SectionWraper>
     );
   }
-  if (isRevised) return <SectionWraper>Results</SectionWraper>;
+  if (isRevised) {
+    return <SectionWraper>Results</SectionWraper>;
+  }
 
   return (
     <SectionWraper>
@@ -245,12 +187,12 @@ export default function Revise() {
         allowTouchMove={false}
       >
         <SwiperSlide className="bg-red-200 flex items-center justify-center text-center rounded-lg p-5">
-          {questions.current[queueTop].question}
+          {questions[queueTop].question}
         </SwiperSlide>
 
         <SwiperSlide className="bg-red-200 rounded-lg p-5">
           <ReactMarkdown className="h-full flex items-center justify-center text-center overflow-auto">
-            {questions.current[queueTop].answer}
+            {questions[queueTop].answer}
           </ReactMarkdown>
         </SwiperSlide>
       </Swiper>

@@ -21,7 +21,7 @@ function App() {
         <Route element={<RequireAuth />}>
           <Route element={<DashboardLayout />}>
             <Route index element={<Home />} />
-            <Route path="/revise" element={<Revise />} />
+            <Route path="/revise/:id" element={<Revise />} />
             <Route path="/add-new" element={<AddNew />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/me" element={<Profile />} />

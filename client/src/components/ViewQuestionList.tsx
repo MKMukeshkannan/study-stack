@@ -3,6 +3,7 @@ import { QuestionType } from "@/lib/validators";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 interface props {
   stack_name: string;
@@ -49,7 +50,9 @@ const ViewQuestionList = ({ stack_id, stack_name, setOpen }: props) => {
 
   return (
     <section className="flex flex-col gap-3">
-      <h1 className="text-5xl text-center font-extrabold text-slate-800">{stack_name}</h1>
+      <h1 className="text-5xl text-center font-extrabold text-slate-800">
+        {stack_name}
+      </h1>
       {questions.map((val) => (
         <section
           key={val.question_id}
@@ -70,7 +73,11 @@ const ViewQuestionList = ({ stack_id, stack_name, setOpen }: props) => {
           )}
         </section>
       ))}
-      <Button>Revise</Button>
+      <Link to={`revise/${stack_id}`}>
+        <Button>
+          Revise
+        </Button>
+      </Link>
     </section>
   );
 };

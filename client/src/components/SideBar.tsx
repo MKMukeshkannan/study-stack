@@ -50,7 +50,6 @@ export default function SideBar() {
       <section className="flex flex-col flex-1 mb-24 justify-center space-y-4">
         <IconText text="Home" icon={<IconHome />} link="/" />
         <IconText text="Add New" icon={<IconFilePlus />} link="add-new" />
-        <IconText text="Revise" icon={<IconReload />} link="/revise" />
         <IconText text="Settings" icon={<IconSettings />} link="/settings" />
       </section>
       <h1
