@@ -12,6 +12,7 @@ import {
   insertQuestionQuery,
   updateQuestionQuery,
 } from "../utils/queries.js";
+import format from "pg-format";
 
 async function createQuestion(req: Request, res: Response) {
   const { question_id, question, answer } = questionsPostValidator.parse(
@@ -47,4 +48,41 @@ async function updateQuestion(req: Request, res: Response) {
   return res.status(200).send("Sucessfully Updated");
 }
 
-export { createQuestion, deleteQuestion, getAllQuestion, updateQuestion };
+async function updateDifficulty(req: Request, res: Response) {
+  const { confidence, data } = req.body;
+  const stackId = stackIdValidator.parse(req.body.stack_id);
+
+  const stackParams = [confidence, stackId];
+  await pool.query(
+    "UPDATE stack SET confidence=$1, last_revised=CURRENT_DATE WHERE stack_id=$2;",
+    stackParams,
+  );
+  const questionParam = [];
+
+  for (let i = 0; i < data.length; i++) {
+    questionParam.push([
+      stackId,
+      parseInt(data[i].question_id),
+      parseInt(data[i].difficulty),
+    ]);
+  }
+  await pool.query(
+    format(
+      `UPDATE questions
+SET difficulty=new_val.difficulty
+FROM (VALUES %s ) AS new_val(stack_id, question_id, difficulty)
+WHERE questions.question_id = new_val.question_id AND questions.stack_id = new_val.stack_id;`,
+      questionParam,
+    ),
+  );
+
+  return res.status(200).send("Sucessfully Updated");
+}
+
+export {
+  createQuestion,
+  deleteQuestion,
+  getAllQuestion,
+  updateDifficulty,
+  updateQuestion,
+};

@@ -4,6 +4,7 @@ import {
   createQuestion,
   deleteQuestion,
   getAllQuestion,
+  updateDifficulty,
   updateQuestion,
 } from "../Controller/QuestionController.js";
 import asyncMiddleware from "../middleware/asyncMiddleware.js";
@@ -26,6 +27,12 @@ route.put(
   "/get-questions/:question_id",
   [authrizeToken, authorizeUserStack],
   asyncMiddleware(updateQuestion),
+);
+
+route.put(
+  "/update-difficulty/:stack_id",
+  [authrizeToken, authorizeUserStack],
+  asyncMiddleware(updateDifficulty),
 );
 
 route.delete(
