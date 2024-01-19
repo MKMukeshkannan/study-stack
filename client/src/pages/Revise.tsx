@@ -9,6 +9,11 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate, useParams } from "react-router-dom";
 import useAxiosPrivate from "@/hooks/useAxiosPrivate";
 
+interface QuestionDifficulty {
+  question_id: number;
+  difficulty: number;
+}
+
 interface QuestionType {
   stack_id: number;
   question_id: number;
@@ -122,6 +127,8 @@ export default function Revise() {
 
     const occurance = questionOccurance.current?.get(queueTop) || 0;
     const changedQueue = questionQueue.current;
+    questions[queueTop].difficulty = difficulty;
+    console.log(questions[queueTop]);
 
     if (difficulty == 1 && occurance < 1) {
       const end = changedQueue.length > 5 ? 3 : changedQueue.length;
@@ -169,6 +176,35 @@ export default function Revise() {
     );
   }
   if (isRevised) {
+    let data: QuestionDifficulty[] = [];
+    let totalDifficulty = 0;
+    for (let question of questions) {
+      totalDifficulty += question.difficulty;
+      data.push({
+        question_id: question.question_id,
+        difficulty: question.difficulty,
+      });
+    }
+
+    const confidence = Math.floor((3 * questions.length) - totalDifficulty) /
+      (2 * questions.length) * 100;
+
+    const updateConfidence = async () => {
+      try {
+        await axiosPrivate.put(
+          `http://localhost:6969/api/v1/question/update-difficulty/${stack_id}`,
+          { data, confidence },
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          },
+        );
+      } catch (e: any) {
+        console.log(e);
+      }
+    };
+    updateConfidence();
+
     return <SectionWraper>Results</SectionWraper>;
   }
 
